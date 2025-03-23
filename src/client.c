@@ -6,13 +6,33 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:22:26 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/23 15:33:01 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/23 21:31:53 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
 int	g_signal_received = 0;
+
+void	send_len(pid_t pid, int len)
+{
+	int	timeout;
+	int	bit_index;
+
+	bit_index = 0;
+	while (bit_index < 32)
+	{
+		g_signal_received = 0;
+		timeout = 0;
+		if ((len &(1 << bit_index)) != 0)
+			kill(pid, SIGUSR2);
+		else
+			kill(pid, SIGUSR1);
+		while (g_signal_received == 0)
+			pause();
+		bit_index++;
+	}
+}
 
 int	param_check(int argc, char**argv)
 {
@@ -83,7 +103,7 @@ void	send_char(pid_t pid, unsigned char c)
 		else
 			kill(pid, SIGUSR1);
 		while (g_signal_received == 0)
-			sleep(100);
+			pause();
 		bit_index++;
 	}
 }
@@ -91,14 +111,17 @@ void	send_char(pid_t pid, unsigned char c)
 void	send_message(pid_t pid, char *message)
 {
 	int	i;
+	int	len;
 
 	i = 0;
+	len = ft_strlen(message);
+	send_len(pid, len);
 	while (message[i])
 	{
 		send_char(pid, message[i]);
 		i++;
 	}
-	send_char(pid, '\n');
+	send_char(pid, '\0');
 	ft_printf_fd(1, "Message sent successfully!\n");
 }
 
