@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:22:26 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/23 21:31:53 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/24 21:49:52 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ void	send_message(pid_t pid, char *message)
 	send_len(pid, len);
 	while (message[i])
 	{
+		//ft_printf_fd(1, "sent char : %c\n", message[i]);
 		send_char(pid, message[i]);
 		i++;
 	}
