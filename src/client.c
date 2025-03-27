@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:22:26 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/24 21:49:52 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/27 10:48:14 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,12 @@ int	g_signal_received = 0;
 
 void	send_len(pid_t pid, int len)
 {
-	int	timeout;
 	int	bit_index;
 
 	bit_index = 0;
 	while (bit_index < 32)
 	{
 		g_signal_received = 0;
-		timeout = 0;
 		if ((len &(1 << bit_index)) != 0)
 			kill(pid, SIGUSR2);
 		else
@@ -63,7 +61,7 @@ int	param_check(int argc, char**argv)
 
 void	signal_handler(int signum)
 {
-	if (signum == SIGUSR1 || signum == SIGUSR2)
+	if (signum == SIGUSR1)
 		g_signal_received = 1;
 }
 
@@ -75,29 +73,19 @@ int	sigaction_init(void)
 	sa.sa_handler = signal_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGUSR1, &sa, NULL) == -1)
-	{
-		ft_printf_fd(2, "Error: Failed to set up SIGUSR1\n");
-		return (1);
-	}
-	if (sigaction(SIGUSR2, &sa, NULL) == -1)
-	{
-		ft_printf_fd(2, "Error: Failed to set up SIGUSR2\n");
-		return (1);
-	}
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	return (0);
 }
 
 void	send_char(pid_t pid, unsigned char c)
 {
-	int	timeout;
 	int	bit_index;
 
 	bit_index = 0;
 	while (bit_index < 8)
 	{
 		g_signal_received = 0;
-		timeout = 0;
 		if ((c &(1 << bit_index)) != 0)
 			kill(pid, SIGUSR2);
 		else

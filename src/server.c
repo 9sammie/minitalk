@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 21:40:48 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/25 19:59:59 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/27 11:20:14 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ int	get_strlen(int signum, siginfo_t *info, void *context)
 
     (void)context;
 	if (bit_count == 0)
+	{
 		len = 0;
+		client_pid = 0;
+	}
     if (!client_pid)
         client_pid = info->si_pid;
     if (signum == SIGUSR2)
@@ -45,6 +48,8 @@ char	*store_str(char *str, int signum, siginfo_t *info, void *context)
 	static pid_t			client_pid = 0;
 
 	(void)context;
+	if (str_index == 0 && bit_count == 0)
+		client_pid = 0;
 	if (!client_pid)
 		client_pid = info->si_pid;
 	if (bit_count == 0)
@@ -55,12 +60,27 @@ char	*store_str(char *str, int signum, siginfo_t *info, void *context)
 	bit_count++;
 	if (bit_count == 8)
 	{
-		//ft_printf_fd(1, "\n");
 		str[str_index++] = c;
 		c = 0;
 		bit_count = 0;
 	}
 	return (str);
+}
+
+void	print_str(int len, char **str)
+{
+	static int	received_bits = 0;
+
+	received_bits++;
+	if (received_bits == len * 8)
+	{
+		ft_printf_fd(1, "%s\n", str);
+		free(str);
+		str = NULL;
+		len = 0;
+		received_bits = 0;
+		str_index = 0;
+	}
 }
 
 void	signal_handler(int signum, siginfo_t *info, void *context)
@@ -72,11 +92,11 @@ void	signal_handler(int signum, siginfo_t *info, void *context)
 
 	if (receiving_len == 1)
 	{
+		len = 0;
 		len = get_strlen(signum, info, context);
 		if (len > 0)
 		{
 			receiving_len = 0;
-			received_bits = 0;
 			str = malloc(sizeof(char) * (len + 1));
 			if (!str)
 				return ;
@@ -86,17 +106,8 @@ void	signal_handler(int signum, siginfo_t *info, void *context)
 		return ;
 	}
 	str = store_str(str, signum, info, context);
-	received_bits++;
-	if (received_bits == len * 8)
-	{
-		ft_printf_fd(1, "%s\n", str);
-		free(str);
-		str = NULL;
-		receiving_len = 1;
-		len = 0;
-		received_bits = 0;
-		str_index = 0;
-	}
+	print_str(len, str);
+	receiving_len = 1;
 }
 
 int	sigaction_init(void)
