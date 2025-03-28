@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:22:26 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/28 18:46:55 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/28 20:02:30 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	send_char(pid_t pid, unsigned char c)
 	int	bit_index;
 	int	time_out;
 
+	time_out = 0;
 	bit_index = 0;
 	while (bit_index < 8)
 	{
@@ -37,13 +38,7 @@ void	send_char(pid_t pid, unsigned char c)
 			kill(pid, SIGUSR1);
 		while (g_signal_received == 0)
 		{
-			time_out++;
 			pause();
-		}
-		if (time_out >= 100)
-		{
-			ft_printf_fd(1, "No news from the server 💔\n");
-			return ;
 		}
 		bit_index++;
 	}
@@ -54,6 +49,7 @@ void	send_len(pid_t pid, int len)
 	int	bit_index;
 	int	time_out;
 
+	time_out = 0;
 	bit_index = 0;
 	while (bit_index < 32)
 	{
@@ -62,15 +58,9 @@ void	send_len(pid_t pid, int len)
 			kill(pid, SIGUSR2);
 		else
 			kill(pid, SIGUSR1);
-		while (g_signal_received == 0 && time_out < 100)
+		while (g_signal_received == 0)
 		{
-			time_out++;
 			pause();
-		}
-		if (time_out >= 100)
-		{
-			ft_printf_fd(1, "No news from the server 💔\n");
-			return ;
 		}
 		bit_index++;
 	}
@@ -108,11 +98,23 @@ int	sigaction_init(void)
 int	param_check(int argc, char**argv)
 {
 	int i;
+	long server_pid;
 
 	i = 0;
-	if (argc != 3)
+	if (argc < 3 || argv[2][0] == 0)
 	{
-		ft_printf_fd(2, "Usage: %s <server_pid> <message>\n", argv[0]);
+		ft_printf_fd(2, "Message missing 🛟\n");
+		return (1);
+	}
+	if (argc > 3)
+	{
+		ft_printf_fd(2, "Too many arguments 🛟\n");
+		return (1);
+	}
+	server_pid = ft_atoi(argv[1]);
+	if (server_pid < INT_MIN || server_pid > INT_MAX || server_pid <= 0)
+	{
+		ft_printf_fd(2, "Invalid PID 🛟\n");
 		return (1);
 	}
 	while (argv[1][i])
@@ -123,11 +125,6 @@ int	param_check(int argc, char**argv)
 			return (1);	
 		}
 		i++;
-	}
-	if (argv[2][0] == 0)
-	{
-		ft_printf_fd(2, "Message missing 🛟\n");
-		return (1);
 	}
 	return (0);
 }
@@ -141,13 +138,13 @@ int	main(int argc, char **argv)
 		return (1);
 	sigaction_init();
 	server_pid = ft_atoi(argv[1]);
-	if (server_pid <= 0)
+	if (kill(server_pid, 0) != 0)
 	{
-		ft_printf_fd(2, "Error : Invalid PID\n");
-		return (1);
+		ft_printf_fd(2, "No process with PID : %d 🛟\n", server_pid);
+        return (1);
 	}
 	message = argv[2];
-	ft_printf_fd(1, "Sending message to the server 🏄 (PID: %d)...\n", server_pid);
+	ft_printf_fd(1, "Sending message to the server 🏄 (PID: %d)\n", server_pid);
 	send_message(server_pid, message);
 	return (0);
 }
