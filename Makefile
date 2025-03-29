@@ -17,14 +17,16 @@ SERVER_OBJ = $(addprefix $(SERVER_OBJ_DIR)/, $(SERVER_SRC:.c=.o))
 
 
 
-CLIENT_BONUS_SRC = client.c client_utils.c
-SERVER_BONUS_SRC = server.c server_utils.c
+SRC_DIR_BONUS = src_bonus
+
+CLIENT_BONUS_SRC = client_bonus.c client_utils_bonus.c
+SERVER_BONUS_SRC = server_bonus.c server_utils_bonus.c
 
 CLIENT_BONUS_OBJ_DIR = obj_bonus/client
 SERVER_BONUS_OBJ_DIR = obj_bonus/server
 
 CLIENT_BONUS_OBJ = $(addprefix $(CLIENT_BONUS_OBJ_DIR)/, $(CLIENT_BONUS_SRC:.c=.o))
-SERVER_BONUS_OBJ = $(addprefix $(SERVER_BONUS_OBJ_DIR)/, $(SERVER_SRC:.c=.o))
+SERVER_BONUS_OBJ = $(addprefix $(SERVER_BONUS_OBJ_DIR)/, $(SERVER_BONUS_SRC:.c=.o))
 
 #############################################################################################
 #############################################################################################
@@ -49,10 +51,12 @@ LIBFT = $(LIBFT_DIR)/libft.a
 #############################################################################################
 #############################################################################################
 
-all: $(CLIENT) $(SERVER)
-
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR)
+
+
+
+all: $(CLIENT) $(SERVER)
 
 $(CLIENT_OBJ_DIR):
 	@mkdir -p $(CLIENT_OBJ_DIR)
@@ -82,10 +86,10 @@ $(CLIENT_BONUS_OBJ_DIR):
 $(SERVER_BONUS_OBJ_DIR):
 	@mkdir -p $(SERVER_BONUS_OBJ_DIR)
 
-$(CLIENT_BONUS_OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(CLIENT_BONUS_OBJ_DIR)
+$(CLIENT_BONUS_OBJ_DIR)/%.o: $(SRC_DIR_BONUS)/%.c $(HEADERS) | $(CLIENT_BONUS_OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(SERVER_BONUS_OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(SERVER_BONUS_OBJ_DIR)
+$(SERVER_BONUS_OBJ_DIR)/%.o: $(SRC_DIR_BONUS)/%.c $(HEADERS) | $(SERVER_BONUS_OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(CLIENT_BONUS): $(LIBFT) $(CLIENT_BONUS_OBJ)
@@ -101,9 +105,13 @@ clean:
 	@rm -rf obj obj_bonus
 	@$(MAKE) -C $(LIBFT_DIR) clean
 
+
+
 fclean: clean
 	@rm -f $(CLIENT) $(SERVER) $(CLIENT_BONUS) $(SERVER_BONUS)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
+
+
 
 re: fclean all
 
