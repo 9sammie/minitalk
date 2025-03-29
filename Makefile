@@ -6,8 +6,8 @@
 
 SRC_DIR = src
 
-CLIENT_SRC = client.c
-SERVER_SRC = server.c
+CLIENT_SRC = client.c client_utils.c
+SERVER_SRC = server.c server_utils.c
 
 CLIENT_OBJ_DIR = obj/client
 SERVER_OBJ_DIR = obj/server

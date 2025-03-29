@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:22:26 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/28 20:02:30 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/29 14:14:17 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,25 +66,10 @@ void	send_len(pid_t pid, int len)
 	}
 }
 
-void	send_message(pid_t pid, char *message)
-{
-	int	i;
-	int	len;
-
-	i = 0;
-	len = ft_strlen(message);
-	send_len(pid, len);
-	while (message[i])
-	{
-		send_char(pid, message[i]);
-		i++;
-	}
-}
-
 int	sigaction_init(void)
 {
 	struct sigaction	sa;
-	
+
 	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = signal_handler;
 	sigemptyset(&sa.sa_mask);
@@ -95,45 +80,16 @@ int	sigaction_init(void)
 	return (0);
 }
 
-int	param_check(int argc, char**argv)
-{
-	int i;
-	long server_pid;
-
-	i = 0;
-	if (argc < 3 || argv[2][0] == 0)
-	{
-		ft_printf_fd(2, "Message missing 🛟\n");
-		return (1);
-	}
-	if (argc > 3)
-	{
-		ft_printf_fd(2, "Too many arguments 🛟\n");
-		return (1);
-	}
-	server_pid = ft_atoi(argv[1]);
-	if (server_pid < INT_MIN || server_pid > INT_MAX || server_pid <= 0)
-	{
-		ft_printf_fd(2, "Invalid PID 🛟\n");
-		return (1);
-	}
-	while (argv[1][i])
-	{
-		if (!ft_isdigit(argv[1][i]))
-		{
-			ft_printf_fd(2,"Invalid PID 🛟\n");
-			return (1);	
-		}
-		i++;
-	}
-	return (0);
-}
-
 int	main(int argc, char **argv)
 {
 	pid_t				server_pid;
 	char				*message;
 
+	if (argc > 3)
+	{
+		ft_printf_fd(2, "Too many arguments 🛟\n");
+		return (1);
+	}
 	if (param_check(argc, argv) == 1)
 		return (1);
 	sigaction_init();
@@ -141,7 +97,7 @@ int	main(int argc, char **argv)
 	if (kill(server_pid, 0) != 0)
 	{
 		ft_printf_fd(2, "No process with PID : %d 🛟\n", server_pid);
-        return (1);
+		return (1);
 	}
 	message = argv[2];
 	ft_printf_fd(1, "Sending message to the server 🏄 (PID: %d)\n", server_pid);
