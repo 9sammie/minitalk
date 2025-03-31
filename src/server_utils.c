@@ -6,11 +6,13 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 12:54:06 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/31 17:49:14 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/31 22:47:54 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
+void	
 
 void	signal_server_handler(int signum, siginfo_t *info, void *context)
 {
@@ -23,6 +25,7 @@ void	signal_server_handler(int signum, siginfo_t *info, void *context)
 	client_pid = info->si_pid;
 	if (receiving_len == 1)
 	{
+		usleep(500);
 		if (len != 0)
 			get_strlen(0, 0);
 		len = get_strlen(client_pid, signum);
@@ -33,6 +36,7 @@ void	signal_server_handler(int signum, siginfo_t *info, void *context)
 	print_str(len, &str, &receiving_len);
 	if (receiving_len == 1)
 	{
+		usleep(500);
 		kill(client_pid, SIGUSR2);
 		len = 0;
 	}

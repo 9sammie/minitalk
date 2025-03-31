@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 12:54:06 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/31 18:01:15 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/31 20:12:08 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	signal_server_handler(int signum, siginfo_t *info, void *context)
 	client_pid = info->si_pid;
 	if (receiving_len == 1)
 	{
+		usleep(500);
 		if (len != 0)
 			get_strlen(0, 0);
 		len = get_strlen(client_pid, signum);
@@ -33,6 +34,7 @@ void	signal_server_handler(int signum, siginfo_t *info, void *context)
 	print_str(len, &str, &receiving_len);
 	if (receiving_len == 1)
 	{
+		usleep(500);
 		kill(client_pid, SIGUSR2);
 		len = 0;
 	}

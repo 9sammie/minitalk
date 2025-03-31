@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:22:26 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/31 17:58:18 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/31 20:12:08 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,10 @@ void	signal_handler(int signum)
 {
 	if (signum == SIGUSR1)
 		g_signal_received = 1;
-	usleep(2000);
 	if (signum == SIGUSR2)
+	{
 		ft_printf_fd(1, "Message entirely received by the server 🏝️\n");
+	}
 }
 
 void	send_char(pid_t pid, unsigned char c)
@@ -30,6 +31,7 @@ void	send_char(pid_t pid, unsigned char c)
 	bit_index = 0;
 	while (bit_index < 8)
 	{
+		usleep(500);
 		g_signal_received = 0;
 		if ((c &(1 << bit_index)) != 0)
 			kill(pid, SIGUSR2);
@@ -50,6 +52,7 @@ void	send_len(pid_t pid, int len)
 	bit_index = 0;
 	while (bit_index < 32)
 	{
+		usleep(500);
 		g_signal_received = 0;
 		if ((len &(1 << bit_index)) != 0)
 			kill(pid, SIGUSR2);
@@ -99,5 +102,6 @@ int	main(int argc, char **argv)
 	message = argv[2];
 	ft_printf_fd(1, "Sending message to the server 🏄 (PID: %d)\n", server_pid);
 	send_message(server_pid, message);
+	usleep(100000);
 	return (0);
 }
