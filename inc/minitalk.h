@@ -6,19 +6,19 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:40:09 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/29 12:58:54 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/31 18:04:28 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINITALK_H
 # define MINITALK_H
 
-# define _POSIX_C_SOURCE 200809L
-
 # include "../libft/inc/libft.h"
 # include <signal.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <bits/types/siginfo_t.h>
+# include <asm-generic/signal-defs.h>
 
 int		param_check(int argc, char**argv);
 void	send_message(pid_t pid, char *message);

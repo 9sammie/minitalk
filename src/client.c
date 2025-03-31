@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 16:22:26 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/29 14:14:17 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/31 17:57:11 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	signal_handler(int signum)
 {
 	if (signum == SIGUSR1)
 		g_signal_received = 1;
+	usleep(2000);
 	if (signum == SIGUSR2)
 		ft_printf_fd(1, "Message entirely received by the server 🏝️\n");
 }
@@ -25,9 +26,7 @@ void	signal_handler(int signum)
 void	send_char(pid_t pid, unsigned char c)
 {
 	int	bit_index;
-	int	time_out;
 
-	time_out = 0;
 	bit_index = 0;
 	while (bit_index < 8)
 	{
@@ -47,9 +46,7 @@ void	send_char(pid_t pid, unsigned char c)
 void	send_len(pid_t pid, int len)
 {
 	int	bit_index;
-	int	time_out;
 
-	time_out = 0;
 	bit_index = 0;
 	while (bit_index < 32)
 	{

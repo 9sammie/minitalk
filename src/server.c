@@ -6,7 +6,7 @@
 /*   By: maballet <maballet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 21:40:48 by maballet          #+#    #+#             */
-/*   Updated: 2025/03/29 14:16:37 by maballet         ###   ########lyon.fr   */
+/*   Updated: 2025/03/31 17:58:00 by maballet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,12 @@ void	print_str(int len, char **str, int *receiving_len)
 	received_bits++;
 	if (received_bits >= len * 8)
 	{
+		*receiving_len = 1;
 		ft_printf_fd(1, "%s\n", *str);
 		free(*str);
 		*str = NULL;
 		received_bits = 0;
 		g_str_index = 0;
-		*receiving_len = 1;
 	}
 }
 

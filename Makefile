@@ -51,12 +51,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 #############################################################################################
 #############################################################################################
 
-$(LIBFT):
-	@$(MAKE) -C $(LIBFT_DIR)
-
-
-
-all: $(CLIENT) $(SERVER)
+all: libft $(CLIENT) $(SERVER)
 
 $(CLIENT_OBJ_DIR):
 	@mkdir -p $(CLIENT_OBJ_DIR)
@@ -70,15 +65,15 @@ $(CLIENT_OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(CLIENT_OBJ_DIR)
 $(SERVER_OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(SERVER_OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(CLIENT): $(LIBFT) $(CLIENT_OBJ)
+$(CLIENT): $(CLIENT_OBJ)
 	$(CC) $(CFLAGS) $(CLIENT_OBJ) -L $(LIBFT_DIR) -lft -o $(CLIENT)
 
-$(SERVER): $(LIBFT) $(SERVER_OBJ)
+$(SERVER): $(SERVER_OBJ)
 	$(CC) $(CFLAGS) $(SERVER_OBJ) -L $(LIBFT_DIR) -lft -o $(SERVER)
 
 
 
-bonus: $(CLIENT_BONUS) $(SERVER_BONUS)
+bonus: libft $(CLIENT_BONUS) $(SERVER_BONUS)
 
 $(CLIENT_BONUS_OBJ_DIR):
 	@mkdir -p $(CLIENT_BONUS_OBJ_DIR)
@@ -92,11 +87,16 @@ $(CLIENT_BONUS_OBJ_DIR)/%.o: $(SRC_DIR_BONUS)/%.c $(HEADERS) | $(CLIENT_BONUS_OB
 $(SERVER_BONUS_OBJ_DIR)/%.o: $(SRC_DIR_BONUS)/%.c $(HEADERS) | $(SERVER_BONUS_OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(CLIENT_BONUS): $(LIBFT) $(CLIENT_BONUS_OBJ)
+$(CLIENT_BONUS): $(CLIENT_BONUS_OBJ)
 	$(CC) $(CFLAGS) $(CLIENT_BONUS_OBJ) -L $(LIBFT_DIR) -lft -o $(CLIENT_BONUS)
 
-$(SERVER_BONUS): $(LIBFT) $(SERVER_BONUS_OBJ)
+$(SERVER_BONUS): $(SERVER_BONUS_OBJ)
 	$(CC) $(CFLAGS) $(SERVER_BONUS_OBJ) -L $(LIBFT_DIR) -lft -o $(SERVER_BONUS)
+
+
+
+libft:
+	@$(MAKE) -C $(LIBFT_DIR)
 
 
 
@@ -115,4 +115,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re bonus libft
